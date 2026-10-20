@@ -3,9 +3,9 @@ FROM python:3.12-slim
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PORT=8080
 WORKDIR /app
 
-COPY pyproject.toml ./
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt && useradd --uid 10001 --no-create-home appuser
 COPY app ./app
-RUN pip install --no-cache-dir . && useradd --uid 10001 --no-create-home appuser
 
 USER appuser
 EXPOSE 8080

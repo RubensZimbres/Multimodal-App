@@ -1,35 +1,4 @@
-[project]
-name = "multimodal-analyst"
-version = "0.1.0"
-description = "Multimodal company analysis API powered by Gemini"
-requires-python = ">=3.12"
-dependencies = [
-    "fastapi>=0.115",
-    "uvicorn[standard]>=0.30",
-    "google-genai>=2.0",
-    "google-cloud-storage>=3.0",
-    "firebase-admin>=7.0",
-    "httpx>=0.28",
-    "pydantic>=2.9",
-    "pydantic-settings>=2.6",
-    "sse-starlette>=2.1",
-]
-
-[project.optional-dependencies]
-dev = [
-    "pytest>=8",
-    "pytest-asyncio>=0.24",
-    "respx>=0.21",
-    "ruff>=0.7",
-    "mypy>=1.13",
-]
-
-[build-system]
-requires = ["setuptools>=75"]
-build-backend = "setuptools.build_meta"
-
-[tool.setuptools.packages.find]
-include = ["app*"]
+# Tool configuration only; dependencies live in requirements.txt / requirements-dev.txt.
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"

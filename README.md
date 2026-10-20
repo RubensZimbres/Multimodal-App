@@ -34,7 +34,7 @@ the Vertex AI / Agent Platform API enabled (`gcloud auth application-default log
 
 ```bash
 # API on :8080
-python3 -m venv .venv && .venv/bin/pip install -e "backend[dev]"
+python3 -m venv .venv && .venv/bin/pip install -r backend/requirements-dev.txt
 cp backend/.env.example backend/.env       # set GOOGLE_CLOUD_PROJECT, ALPHA_VANTAGE_API_KEY
 cd backend && ../.venv/bin/uvicorn app.main:app --reload --port 8080
 
