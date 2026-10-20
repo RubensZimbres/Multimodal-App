@@ -1,4 +1,0 @@
-streamlit
-google-cloud-aiplatform
-google-cloud-logging
-google-cloud-secret-manager

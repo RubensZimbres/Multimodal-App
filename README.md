@@ -1,124 +1,85 @@
-# Cloud Run application utilizing Streamlit Framework that demonstrates working with Vertex AI Gemini API
+# Multimodal Analyst
 
-|           |                                                |
-| --------- | ---------------------------------------------- |
-| Author(s) | [Lavi Nigam](https://github.com/lavinigam-gcp) |
+Analyze any listed company from its **financial statements (PDF), market data and news,
+product images, earnings-call audio and marketing videos** with Google's multimodal
+Gemini models, then cross-check everything in a strategic synthesis.
 
-This application demonstrates a Cloud Run application that uses the [Streamlit](https://streamlit.io/) framework.
-
-Sample screenshots and video demos of the application are shown below:
-
-## Application screenshots
-
-<img src="https://storage.googleapis.com/github-repo/img/gemini/sample-apps/gemini-streamlit-cloudrun/assets/gemini_pro_text.png" width="50%"/>
-
-## Run the Application locally (on Cloud Shell)
-
-> NOTE: **Before you move forward, ensure that you have followed the instructions in [SETUP.md](../SETUP.md).**
-> Additionally, ensure that you have cloned this repository and you are currently in the `gemini-streamlit-cloudrun` folder. This should be your active working directory for the rest of the commands.
-
-To run the Streamlit Application locally (on cloud shell), we need to perform the following steps:
-
-1. Setup the Python virtual environment and install the dependencies:
-
-   In Cloud Shell, execute the following commands:
-
-   ```bash
-   python3 -m venv gemini-streamlit
-   source gemini-streamlit/bin/activate
-   pip install -r requirements.txt
-   ```
-
-2. Your application requires access to two environment variables:
-
-   - `GCP_PROJECT` : This the Google Cloud project ID.
-   - `GCP_REGION` : This is the region in which you are deploying your Cloud Run app. For e.g. us-central1.
-
-   These variables are needed since the Vertex AI initialization needs the Google Cloud project ID and the region. The specific code line from the `app.py`
-   function is shown here:
-   `vertexai.init(project=PROJECT_ID, location=LOCATION)`
-
-   In Cloud Shell, execute the following commands:
-
-   ```bash
-   export GCP_PROJECT='documentai-666'  # Change this
-   export GCP_REGION='us-central1'             # If you change this, make sure the region is supported.
-   ```
-
-3. To run the application locally, execute the following command:
-
-   In Cloud Shell, execute the following command:
-
-   ```bash
-   streamlit run app.py \
-     --browser.serverAddress=localhost \
-     --server.enableCORS=false \
-     --server.enableXsrfProtection=false \
-     --server.port 8080
-   ```
-
-The application will startup and you will be provided a URL to the application. Use Cloud Shell's [web preview](https://cloud.google.com/shell/docs/using-web-preview) function to launch the preview page. You may also visit that in the browser to view the application. Choose the functionality that you would like to check out and the application will prompt the Vertex AI Gemini API and display the responses.
-
-## Build and Deploy the Application to Cloud Run
-
-> NOTE: **Before you move forward, ensure that you have followed the instructions in [SETUP.md](../SETUP.md).**
-> Additionally, ensure that you have cloned this repository and you are currently in the `gemini-streamlit-cloudrun` folder. This should be your active working directory for the rest of the commands.
-
-To deploy the Streamlit Application in [Cloud Run](https://cloud.google.com/run/docs/quickstarts/deploy-container), we need to perform the following steps:
-
-1. Your Cloud Run app requires access to two environment variables:
-
-   - `GCP_PROJECT` : This the Google Cloud project ID.
-   - `GCP_REGION` : This is the region in which you are deploying your Cloud Run app. For e.g. us-central1.
-
-   These variables are needed since the Vertex AI initialization needs the Google Cloud project ID and the region. The specific code line from the `app.py`
-   function is shown here:
-   `vertexai.init(project=PROJECT_ID, location=LOCATION)`
-
-   In Cloud Shell, execute the following commands:
-
-   ```bash
-   export GCP_PROJECT='documentai-666'  # Change this
-   export GCP_REGION='us-central1'             # If you change this, make sure the region is supported.
-   ```
-
-2. Now you can build the Docker image for the application and push it to Artifact Registry. To do this, you will need one environment variable set that will point to the Artifact Registry name. Included in the script below is a command that will create this Artifact Registry repository for you.
-
-   In Cloud Shell, execute the following commands:
-
-   ```bash
-   export AR_REPO='repo-multimodal'  # Change this
-   export SERVICE_NAME='gemini-flash-app' # This is the name of our Application and Cloud Run service. Change it if you'd like.
-
-   #make sure you are in the active directory for 'gemini-streamlit-cloudrun'
-   gcloud artifacts repositories create "$AR_REPO" --location="$GCP_REGION" --repository-format=Docker
-   gcloud auth configure-docker "$GCP_REGION-docker.pkg.dev"
-   gcloud builds submit --tag "$GCP_REGION-docker.pkg.dev/$GCP_PROJECT/$AR_REPO/$SERVICE_NAME"
-   ```
-
-3. The final step is to deploy the service in Cloud Run with the image that we had built and had pushed to the Artifact Registry in the previous step:
-
-   In Cloud Shell, execute the following command:
-
-   ```bash
-   gcloud run deploy "$SERVICE_NAME" \
-     --port=8080 \
-     --image="$GCP_REGION-docker.pkg.dev/$GCP_PROJECT/$AR_REPO/$SERVICE_NAME" \
-     --allow-unauthenticated \
-     --platform=managed  \
-     --region=$GCP_REGION \
-     --project=$GCP_PROJECT \
-     --set-env-vars=GCP_PROJECT=$GCP_PROJECT,GCP_REGION=$GCP_REGION \
-     --min-instances 1 --max-instances 1 --cpu 1 --memory 512Mi --concurrency 3
-   ```
- ## --platform=managed  \
+Apple's Q2 FY24 results ship as a one-click demo set.
 
 ```
-NO SITE
-<iframe src="https://gemini-flash-app-ywr3fg5ota-uc.a.run.app?embed=true" width="750" height="1300" scrolling="auto" frameborder="0"></iframe>
+Browser (React + Vite, Firebase Hosting, Firebase Auth)
+   │  POST /api/analyses/*  →  Server-Sent Events (status, tool calls, data, text)
+   │  PUT  signed URL       →  Cloud Storage (user uploads, deleted after 7 days)
+   ▼
+FastAPI on Cloud Run ──► Gemini (google-genai SDK, Gemini Enterprise Agent Platform)
+                     └─► Alpha Vantage (function calling)
 ```
 
+| Analysis | Input | How |
+| --- | --- | --- |
+| Market & news | Ticker | Gemini function calling over Alpha Vantage: quote, fundamentals, 6-month weekly prices, news sentiment. Price chart rendered from the raw series. |
+| Financial statement | PDF | Gemini extracts figures into a typed schema → **ratios computed in Python** (with balance checks) → Gemini explains them. |
+| Pricing | Image | Per-product price comparison across markets. |
+| Earnings call | Audio / video | Takeaways, guidance and tone per speaker. |
+| Marketing | Video | Scene breakdown, selling strategy, emotional appeal. |
+| Synthesis | The above | Contradictions between filings, management and news; strategy recommendations. Uses a Pro model with automatic fallback to Flash. |
 
-On successful deployment, you will be provided a URL to the Cloud Run service. You can visit that in the browser to view the Cloud Run application that you just deployed. Choose the functionality that you would like to check out and the application will prompt the Vertex AI Gemini API and display the responses.
+Models are configuration, not code: `MODEL_DEFAULT` (default `gemini-3.8-flash`) and
+`MODEL_SYNTHESIS` (default `gemini-3.1-pro-preview`).
 
-Congratulations!
+## Local development
+
+Requires Python 3.12+, Node 22+, and Application Default Credentials for a project with
+the Vertex AI / Agent Platform API enabled (`gcloud auth application-default login`).
+
+```bash
+# API on :8080
+python3 -m venv .venv && .venv/bin/pip install -e "backend[dev]"
+cp backend/.env.example backend/.env       # set GOOGLE_CLOUD_PROJECT, ALPHA_VANTAGE_API_KEY
+cd backend && ../.venv/bin/uvicorn app.main:app --reload --port 8080
+
+# Web app on :5173 (proxies /api to :8080; no sign-in when VITE_FIREBASE_API_KEY is empty)
+cd frontend && npm install && npm run dev
+```
+
+## Tests
+
+```bash
+cd backend && ../.venv/bin/pytest            # unit + API tests, no network
+cd backend && RUN_LIVE_TESTS=1 ../.venv/bin/pytest -m live   # real Gemini; checks extraction
+                                                             # of the demo PDF against printed figures
+cd frontend && npm test                      # Vitest + Testing Library
+```
+
+CI (`.github/workflows/ci.yml`) runs lint, type checks, tests, the Docker build and the web build.
+
+## Deploy
+
+1. Create or pick a Firebase project (it is also the GCP project), enable **Authentication →
+   Google** sign-in, and add a web app.
+2. Put its web config in `frontend/.env.production` (`firebase apps:sdkconfig web`), using the
+   `VITE_FIREBASE_*` names from `frontend/.env.example`.
+3. Run:
+
+```bash
+PROJECT_ID=your-project ./infra/deploy.sh          # setup + API + web
+PROJECT_ID=your-project ./infra/deploy.sh api      # redeploy API only
+PROJECT_ID=your-project ./infra/deploy.sh web      # redeploy web only
+```
+
+The script creates a least-privilege service account, an upload bucket with CORS and a
+7-day lifecycle, stores the Alpha Vantage key in Secret Manager, deploys Cloud Run with
+`AUTH_REQUIRED=true`, and publishes the web app to Firebase Hosting.
+
+The browser calls Cloud Run directly (not through a Hosting rewrite) because Hosting
+rewrites time out after 60 seconds and buffer responses, which breaks streaming video
+analyses.
+
+## Security notes
+
+- Every analysis/upload route verifies a Firebase ID token.
+- Gemini only reads demo assets or the caller's own `uploads/<uid>/` objects, so the
+  service account can't be used to read other files.
+- Uploads go straight to Cloud Storage via 15-minute signed URLs with the exact size signed in.
+- Model output is rendered as Markdown without raw HTML.
+- `--max-instances 3` caps spend; tune it for your quota.
