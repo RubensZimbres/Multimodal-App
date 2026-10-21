@@ -8,7 +8,6 @@ import { useAnalysis } from './hooks/useAnalysis'
 import { API_BASE, getDemo } from './lib/api'
 import type { DemoSet, MediaRef, SectionKey } from './lib/types'
 
-// Recharts is only needed once a market analysis returns prices.
 const PriceChart = lazy(() => import('./components/PriceChart').then((m) => ({ default: m.PriceChart })))
 
 type MediaKey = Exclude<SectionKey, 'market'>

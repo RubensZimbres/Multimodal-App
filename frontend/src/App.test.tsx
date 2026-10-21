@@ -18,7 +18,6 @@ function sse(events: [string, unknown][]): Response {
   const stream = new ReadableStream({
     start(controller) {
       const bytes = new TextEncoder().encode(text)
-      // Deliver in two chunks to exercise incremental parsing.
       controller.enqueue(bytes.slice(0, 17))
       controller.enqueue(bytes.slice(17))
       controller.close()

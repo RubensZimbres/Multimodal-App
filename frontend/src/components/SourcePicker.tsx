@@ -22,7 +22,6 @@ function Preview({ asset }: { asset: DemoAsset }) {
 
 export function SourcePicker({ demo, accept, value, onChange, uploadsEnabled }: Props) {
   const name = useId()
-  // The demo manifest loads asynchronously, so default to it until the user chooses.
   const [choice, setMode] = useState<'demo' | 'upload' | null>(null)
   const mode = choice ?? (demo ? 'demo' : 'upload')
   const [uploading, setUploading] = useState(false)

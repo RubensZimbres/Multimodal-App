@@ -47,7 +47,6 @@ class MediaNotAllowed(ValueError):
 
 
 def check_media(media: MediaRef, user_id: str, settings: Settings) -> None:
-    """Only demo assets and the caller's own uploads may be sent to Gemini."""
     if not media.mime_type.startswith(SUPPORTED_MIME_PREFIXES):
         raise MediaNotAllowed(f"Unsupported media type: {media.mime_type}")
     if ".." in media.uri:

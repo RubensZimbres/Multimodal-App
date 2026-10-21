@@ -19,8 +19,6 @@ AV_URL = "https://av.test/query"
 
 
 class FakeLLM:
-    """Scripted stand-in for GeminiLLM that records every call."""
-
     def __init__(self) -> None:
         self.calls: list[dict[str, Any]] = []
         self.chunks: list[str] = ["Hello ", "world"]
@@ -40,7 +38,6 @@ class FakeLLM:
     async def generate(
         self, *, model: str, contents: list[types.Content], config: Any = None
     ) -> types.GenerateContentResponse:
-        # Snapshot: the caller keeps mutating the same list between rounds.
         self.calls.append({"method": "generate", "model": model, "contents": list(contents)})
         if not self.responses:
             raise AssertionError("FakeLLM ran out of scripted responses")
@@ -76,7 +73,6 @@ def text_response(text: str) -> types.GenerateContentResponse:
 
 
 def apple_q2_fy24() -> FinancialStatement:
-    """Figures from Apple's FY24 Q2 condensed consolidated statements (USD millions)."""
     return FinancialStatement(
         company_name="Apple Inc.",
         current_income=IncomeStatement(

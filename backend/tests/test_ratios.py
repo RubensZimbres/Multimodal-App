@@ -30,11 +30,11 @@ def test_apple_ratios_match_hand_calculation() -> None:
 
 def test_improved_respects_direction() -> None:
     r = by_key(apple_q2_fy24())
-    assert r["gross_margin"]["improved"] is True  # up, higher is better
-    assert r["financial_leverage"]["improved"] is True  # down, lower is better
+    assert r["gross_margin"]["improved"] is True
+    assert r["financial_leverage"]["improved"] is True
     assert r["total_debt"]["improved"] is True
     assert r["financial_leverage"]["better_when"] == Better.LOWER
-    assert r["sales_growth"]["improved"] is None  # no prior value to compare
+    assert r["sales_growth"]["improved"] is None
 
 
 def test_apple_passes_consistency_checks_and_flags_period_mismatch() -> None:

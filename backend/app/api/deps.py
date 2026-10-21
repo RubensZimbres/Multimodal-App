@@ -26,7 +26,6 @@ def get_market_client(request: Request, settings: SettingsDep) -> AlphaVantageCl
 async def get_user_id(
     settings: SettingsDep, authorization: Annotated[str | None, Header()] = None
 ) -> str:
-    """Verify the Firebase ID token sent by the frontend and return the user's uid."""
     if not settings.auth_required:
         return "dev"
     if not authorization or not authorization.startswith("Bearer "):

@@ -1,9 +1,3 @@
-"""Async Alpha Vantage client returning compact, model-friendly data.
-
-Alpha Vantage answers rate limits and bad keys with HTTP 200 plus a "Note",
-"Information" or "Error Message" field, so those are turned into errors here.
-"""
-
 import re
 from typing import Any
 
@@ -62,7 +56,6 @@ class AlphaVantageClient:
         raw = data.get("Global Quote") or {}
         if not raw:
             raise MarketDataError(f"No quote found for {ticker}")
-        # Keys look like "05. price"; strip the numeric prefix.
         return {k.split(". ", 1)[-1]: v for k, v in raw.items()}
 
     async def overview(self, ticker: str) -> dict[str, str]:
@@ -72,7 +65,6 @@ class AlphaVantageClient:
         return {k: v for k, v in data.items() if v not in ("None", "-", "")}
 
     async def weekly_prices(self, ticker: str, weeks: int = 26) -> list[PricePoint]:
-        """Weekly closes, oldest first. Weekly series are on the free tier."""
         data = await self._query(function="TIME_SERIES_WEEKLY", symbol=normalize_ticker(ticker))
         series = data.get("Weekly Time Series") or {}
         if not series:

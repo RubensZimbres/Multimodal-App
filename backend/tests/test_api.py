@@ -34,7 +34,6 @@ def test_statement_stream(client: TestClient, fake_llm: FakeLLM) -> None:
     assert ("data", "statement") in kinds and ("data", "ratios") in kinds
     assert "".join(d["text"] for n, d in events if n == "delta") == "Hello world"
     assert events[-1][0] == "done"
-    # The PDF goes to extraction only; the commentary works from computed numbers.
     extract, commentary = fake_llm.calls
     assert extract["contents"][0].file_data.file_uri == PDF["uri"]
     assert all(isinstance(c, str) for c in commentary["contents"])
@@ -138,7 +137,7 @@ def test_auth_required_rejects_missing_token(settings: Settings, fake_llm: FakeL
     settings.auth_required = True
     with TestClient(create_app(settings, llm=fake_llm)) as c:
         assert c.post("/api/analyses/statement", json={"document": PDF}).status_code == 401
-        assert c.get("/api/demo").status_code == 200  # demo manifest is public
+        assert c.get("/api/demo").status_code == 200
 
 
 def test_auth_valid_token_scopes_uploads(settings: Settings, fake_llm: FakeLLM) -> None:

@@ -1,5 +1,3 @@
-"""Image, audio and video analysis with task presets."""
-
 from enum import StrEnum
 
 from app.analyses.common import AnalysisStream, Event, MediaRef, delta, status, text_config

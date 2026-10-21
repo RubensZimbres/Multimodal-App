@@ -16,7 +16,6 @@ const config = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 }
 
-/** Without Firebase config the app runs in local dev mode against an auth-less backend. */
 export const authEnabled = Boolean(config.apiKey)
 
 let app: FirebaseApp | undefined

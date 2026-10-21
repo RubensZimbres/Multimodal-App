@@ -24,7 +24,7 @@ def test_allowed_media(settings: Settings, uri: str) -> None:
 @pytest.mark.parametrize(
     ("uri", "mime"),
     [
-        ("gs://uploads-bucket/uploads/bob/abc/report.pdf", "application/pdf"),  # other user
+        ("gs://uploads-bucket/uploads/bob/abc/report.pdf", "application/pdf"),
         ("gs://uploads-bucket/secrets/key.json", "application/pdf"),
         ("gs://someone-elses-bucket/file.pdf", "application/pdf"),
         ("gs://uploads-bucket/uploads/alice/../bob/x.pdf", "application/pdf"),

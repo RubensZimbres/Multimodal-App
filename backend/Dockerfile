@@ -9,5 +9,4 @@ COPY app ./app
 
 USER appuser
 EXPOSE 8080
-# Cloud Run sets $PORT; keep a single worker and scale with instances.
 CMD ["sh", "-c", "exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT} --proxy-headers"]

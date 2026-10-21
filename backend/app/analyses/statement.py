@@ -1,5 +1,3 @@
-"""Financial statement analysis: extract figures, compute ratios in Python, then comment."""
-
 from app.analyses.common import AnalysisStream, Event, MediaRef, data, delta, status, text_config
 from app.config import Settings
 from app.finance.ratios import RatioReport, compute_ratios

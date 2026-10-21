@@ -1,5 +1,3 @@
-"""Market analysis: Gemini function calling over Alpha Vantage."""
-
 import json
 from collections.abc import Awaitable, Callable
 from typing import Any
@@ -144,7 +142,6 @@ async def run_market(
             yield Event("done", {})
             return
 
-        # Keep the model turn verbatim: Gemini 3 needs its thought signatures back.
         if response.candidates and response.candidates[0].content:
             contents.append(response.candidates[0].content)
         parts = []

@@ -2,8 +2,6 @@ import { getIdToken } from './firebase'
 import { createSseParser } from './sse'
 import type { AnalysisEvent, DemoSet, MediaRef, UploadTicket } from './types'
 
-// The frontend calls Cloud Run directly: Firebase Hosting rewrites cap requests at
-// 60 s and buffer responses, which breaks streaming of long video analyses.
 export const API_BASE = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '')
 
 export class ApiError extends Error {
@@ -30,7 +28,7 @@ async function errorFrom(resp: Response): Promise<ApiError> {
     if (typeof body.detail === 'string') message = body.detail
     else if (Array.isArray(body.detail)) message = body.detail.map((d: { msg: string }) => d.msg).join('; ')
   } catch {
-    // keep the status line
+    return new ApiError(resp.status, message)
   }
   return new ApiError(resp.status, message)
 }
@@ -67,7 +65,6 @@ export async function streamAnalysis(
   parser.end()
 }
 
-/** Ask the API for a signed URL, then PUT the file straight to Cloud Storage. */
 export async function uploadFile(file: File): Promise<MediaRef> {
   const resp = await fetch(`${API_BASE}/api/uploads`, {
     method: 'POST',

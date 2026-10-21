@@ -48,7 +48,6 @@ def _authorize_media(items: list[MediaRef], user: str, settings: Settings) -> No
 
 
 async def _sse(stream: AnalysisStream) -> AsyncIterator[ServerSentEvent]:
-    """Expected failures become an `error` event; the HTTP status is already 200."""
     try:
         async for event in stream:
             yield ServerSentEvent(event=event.type, data=json.dumps(event.data))

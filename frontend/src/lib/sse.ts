@@ -3,10 +3,6 @@ export interface SseMessage {
   data: string
 }
 
-/**
- * Incremental Server-Sent Events parser. EventSource only supports GET without
- * headers, so analyses are POSTed with fetch and the body is parsed here.
- */
 export function createSseParser(onMessage: (msg: SseMessage) => void) {
   let buffer = ''
 
@@ -14,7 +10,7 @@ export function createSseParser(onMessage: (msg: SseMessage) => void) {
     let event = 'message'
     const data: string[] = []
     for (const line of block.split('\n')) {
-      if (line.startsWith(':')) continue // comment / keep-alive ping
+      if (line.startsWith(':')) continue
       const idx = line.indexOf(':')
       const field = idx === -1 ? line : line.slice(0, idx)
       let value = idx === -1 ? '' : line.slice(idx + 1)

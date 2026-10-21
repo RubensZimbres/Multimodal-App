@@ -1,10 +1,4 @@
 #!/usr/bin/env bash
-# One-time setup + deploy of the API (Cloud Run) and the web app (Firebase Hosting).
-# Safe to re-run: existing resources are left as they are.
-#
-#   PROJECT_ID=my-project ./infra/deploy.sh            # everything
-#   PROJECT_ID=my-project ./infra/deploy.sh api        # only the Cloud Run service
-#   PROJECT_ID=my-project ./infra/deploy.sh web        # only Firebase Hosting
 set -euo pipefail
 
 : "${PROJECT_ID:?Set PROJECT_ID}"
@@ -30,7 +24,6 @@ setup() {
     gc iam service-accounts create "$SA_NAME" --display-name "Multimodal Analyst API"
   gc projects add-iam-policy-binding "$PROJECT_ID" --condition=None --quiet \
     --member "serviceAccount:$SA" --role roles/aiplatform.user >/dev/null
-  # Signed upload URLs are signed through IAM signBlob as the service account itself.
   gc iam service-accounts add-iam-policy-binding "$SA" --quiet \
     --member "serviceAccount:$SA" --role roles/iam.serviceAccountTokenCreator >/dev/null
 
@@ -46,7 +39,6 @@ origins = [o for o in sys.argv[1].split(",") if o] + ["http://localhost:5173"]
 print(json.dumps([{"origin": origins, "method": ["PUT"], "maxAgeSeconds": 3600,
                    "responseHeader": ["Content-Type", "x-goog-content-length-range"]}]))
 PY
-  # Uploads are working copies; delete them after a week.
   echo '{"rule":[{"action":{"type":"Delete"},"condition":{"age":7}}]}' >"$lifecycle"
   gc storage buckets update "gs://$UPLOAD_BUCKET" --cors-file "$cors" --lifecycle-file "$lifecycle"
   rm -f "$cors" "$lifecycle"
@@ -79,8 +71,6 @@ env = {
 for k, v in env.items():
     print(f"{k}: {json.dumps(v)}")
 PY
-  # Public at the HTTP layer (browsers call it directly); every API route checks the
-  # Firebase ID token. Long timeout for video analysis; max instances caps spend.
   gc run deploy "$SERVICE" --source "$ROOT/backend" --region "$REGION" \
     --service-account "$SA" --allow-unauthenticated \
     --env-vars-file "$env_file" \

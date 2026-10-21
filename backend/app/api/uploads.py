@@ -1,5 +1,3 @@
-"""Signed-URL uploads: the browser PUTs files straight to GCS, never through the API."""
-
 import re
 import uuid
 from datetime import timedelta
@@ -28,7 +26,6 @@ class UploadTicket(BaseModel):
     upload_url: str
     uri: str
     mime_type: str
-    # The browser must send these headers with its PUT; they are part of the signature.
     headers: dict[str, str]
 
 
@@ -47,8 +44,6 @@ def _sign(settings: Settings, name: str, headers: dict[str, str]) -> str:
     blob = storage.Client(project=project, credentials=credentials).bucket(
         settings.upload_bucket
     ).blob(name)
-    # On Cloud Run the runtime credentials can't sign locally; IAM signBlob is used via
-    # service_account_email + access_token (needs roles/iam.serviceAccountTokenCreator).
     url: str = blob.generate_signed_url(
         version="v4",
         expiration=timedelta(minutes=15),

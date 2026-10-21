@@ -1,9 +1,3 @@
-"""Schema Gemini fills in when reading a financial statement.
-
-Values are in the statement's reporting unit (usually millions). Anything the
-statement does not show is left null rather than guessed.
-"""
-
 from pydantic import BaseModel, Field
 
 

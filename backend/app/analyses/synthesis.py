@@ -1,5 +1,3 @@
-"""Strategic synthesis across the individual analyses."""
-
 import logging
 
 from pydantic import BaseModel, Field
@@ -65,7 +63,6 @@ async def run_synthesis(llm: LLM, settings: Settings, inp: SynthesisInput) -> An
                 started = True
                 yield delta(chunk)
         except LLMError:
-            # Fall back only if nothing reached the client yet; otherwise text would mix.
             if started or i == len(models) - 1:
                 raise
             log.warning("Synthesis model %s failed, falling back", model, exc_info=True)

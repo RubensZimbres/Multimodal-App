@@ -1,9 +1,3 @@
-"""Thin async wrapper around the Google Gen AI SDK.
-
-Analyses depend on the `LLM` protocol rather than on `genai.Client`, so tests can
-inject a scripted fake and never touch the network.
-"""
-
 import logging
 from collections.abc import AsyncIterator, Sequence
 from typing import Any, Protocol, TypeVar, cast
@@ -23,7 +17,7 @@ Contents = Sequence[types.Content | types.Part | str]
 
 
 class LLMError(RuntimeError):
-    """A model call failed in a way worth showing to the user."""
+    pass
 
 
 class LLM(Protocol):

@@ -1,5 +1,3 @@
-"""The original Apple Q2 FY24 case, kept as a one-click demo set."""
-
 from urllib.parse import quote
 
 from fastapi import APIRouter

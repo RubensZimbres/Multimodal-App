@@ -1,9 +1,3 @@
-"""Deterministic ratio calculations.
-
-The model extracts numbers; Python does the maths. Every ratio records which
-periods it was computed from so mismatched comparisons are visible.
-"""
-
 from enum import StrEnum
 
 from pydantic import BaseModel, computed_field
@@ -19,7 +13,7 @@ class Better(StrEnum):
 class Ratio(BaseModel):
     key: str
     name: str
-    unit: str  # "x", "%" or the statement unit for absolute amounts
+    unit: str
     current: float | None
     prior: float | None
     change: float | None
@@ -113,7 +107,6 @@ def _income_ratios(cur: IncomeStatement, pri: IncomeStatement | None) -> list[Ra
             _pct(p.net_income, p.total_net_sales),
             Better.HIGHER, basis,
         ),
-        # Growth is a single value: current period over the comparable prior period.
         _ratio("sales_growth", "Sales growth", "%", sales_growth, None, Better.HIGHER, basis),
     ]
 
@@ -152,11 +145,6 @@ def _balance_ratios(cur: BalanceSheet, pri: BalanceSheet | None, unit: str) -> l
 
 
 def _return_ratios(s: FinancialStatement) -> list[Ratio]:
-    """ROA / ROE pair each period's net income with the balance sheet at its end.
-
-    Statements often compare the latest balance sheet with the fiscal year end rather
-    than the same date a year earlier, so only the current value is reliable.
-    """
     cur_i, cur_b = s.current_income, s.current_balance
     basis = f"{cur_i.period_label} net income / {cur_b.date_label} balance (not annualized)"
     return [

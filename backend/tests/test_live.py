@@ -1,9 +1,3 @@
-"""Live checks against real Gemini. Run with: RUN_LIVE_TESTS=1 pytest -m live
-
-These double as a small eval: if a model upgrade starts misreading the demo
-statement, the extracted figures will no longer match the printed ones.
-"""
-
 import os
 
 import pytest

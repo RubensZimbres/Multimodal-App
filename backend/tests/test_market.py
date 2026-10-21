@@ -34,7 +34,6 @@ async def test_parallel_tool_calls_are_all_executed(
     assert [e.type for e in events][-2:] == ["delta", "done"]
     assert events[-2].data["text"] == "## Briefing"
 
-    # Second request = prompt, model turn (verbatim), one user turn with both responses.
     history = fake_llm.calls[1]["contents"]
     assert [c.role for c in history] == ["user", "model", "user"]
     responses = [p.function_response for p in history[2].parts]
